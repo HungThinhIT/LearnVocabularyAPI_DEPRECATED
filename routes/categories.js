@@ -1,5 +1,6 @@
 var express = require('express');
 const User = require("../models/User");
+const Category = require("../models/Category");
 const auth = require("../middleware/auth")
 var router = express.Router();
 
@@ -11,8 +12,12 @@ var router = express.Router();
 * Get list of categories
 */
 router.get("/", auth, async (req, res) => {
-    console.log(req.user.categories);
-    res.send(req.user.categories);
+    try {
+        const category = await Category.listCategory(req.token);
+        res.status(200).send(category)
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
 
 /*
@@ -20,14 +25,9 @@ router.get("/", auth, async (req, res) => {
 */
 router.post("/",  auth, async(req ,res) => {
     try {
-        const categories = req.body;
-        const user = new User();
-        var create = await user.createCategory(req._id, req.body);
-        res.send(create);
+
     } catch (error) {
-        console.log(error);
-        
-        res.status(500).send(error);
+
     }
     
 });

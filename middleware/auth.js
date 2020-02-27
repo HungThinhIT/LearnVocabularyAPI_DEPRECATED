@@ -14,8 +14,8 @@ const auth = async(req, res, next) => {
         req.token = token
         next()
     } catch (error) {
-        if(error.message == "invalid signature") res.status(401).send({error: "Invalid signature"})
-        if(error.message == "jwt malformed") res.status(401).send({error: "JWT malformed"})
+        if(error.message == "invalid signature") return res.status(401).send({error: "Invalid signature"})
+        if(error.message == "jwt malformed") return res.status(401).send({error: "JWT malformed"})
         else res.status(401).send({error: "Not authorized to access this resources"})
     }
 }

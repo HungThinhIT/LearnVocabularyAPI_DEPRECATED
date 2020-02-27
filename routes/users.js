@@ -17,6 +17,7 @@ router.post("/register", async (req, res) => {
     const user = new User(req.body)
     await user.save()
     const token = await user.generateAuthToken()
+    // const category = await user.categoryDefault()
     res.status(201).send({user, token})
   } catch (error) {
     res.status(400).send(error)
@@ -42,9 +43,26 @@ router.post("/login", async(req, res) => {
 /*
 * Return information of user.
 */
-router.get("/me", auth , async(req, res) => {
+router.get("/me", auth, async(req, res) => {
   res.send(req.user)
 });
+
+/*
+* Logout
+*/
+router.post("/logout", auth, async(req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token != req.token
+    })
+    await req.user.save()
+    res.send()
+  } catch (error) {
+    res.status(500).send(error)
+  }
+});
+
+
 
 /* GET users listing. */
 // router.get('/', function(req, res, next) {

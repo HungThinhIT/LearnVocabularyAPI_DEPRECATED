@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const categoryDefaultObject = require("../sample/CategoryItem")
 
 const cardSchema = mongoose.Schema({
     description: {
@@ -69,6 +70,9 @@ const userSchema = mongoose.Schema({
 userSchema.pre('save', async function (next) {
     // Hash the password before saving the user model
     const user = this
+    //Create default category and card.
+    user.categories = categoryDefaultObject()
+    
     if (user.isModified('password')) {
         user.password = await bcrypt.hash(user.password, 8)
     }

@@ -1,6 +1,8 @@
 var express = require('express');
 const User = require("../models/User");
 const auth = require("../middleware/auth")
+const categoryDefaultObject = require("../sample/CategoryItem")
+
 var router = express.Router();
 
 /*
@@ -15,6 +17,7 @@ var router = express.Router();
 router.post("/register", async (req, res) => {
   try {
     const user = new User(req.body)
+    user.categories = categoryDefaultObject()
     await user.save()
     const token = await user.generateAuthToken()
     res.status(201).send({user, token})

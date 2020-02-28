@@ -25,9 +25,10 @@ router.get("/", auth, async (req, res) => {
 */
 router.post("/",  auth, async(req ,res) => {
     try {
-
+        const category = await Category.createCategory(req.token, req.body)
+        res.status(200).send(category)
     } catch (error) {
-
+        res.status(500).send(error)
     }
     
 });

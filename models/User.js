@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const categoryDefaultObject = require("../sample/CategoryItem")
 
 const cardSchema = mongoose.Schema({
     description: {
@@ -25,13 +24,15 @@ const categorySchema = mongoose.Schema({
         require: false,
     },
     isPublic: {
-        type: Boolean,
+        type: Number,
         require: true,
-        validate: value => {
-            if(!validate.isBoolean(value)){
-                throw new Error({error: "isPublic must be Boolean."})
-            }
-        }
+        min: [0, "Only 0 or 1"],
+        max: 1,
+        // validate: value => {
+        //     if(!validator.isNumeric(value)){
+        //         throw new Error({error: "isPublic must be Numeric [0-1]."})
+        //     }
+        // }
     },
     cards: [cardSchema],
 });
@@ -70,8 +71,6 @@ const userSchema = mongoose.Schema({
 userSchema.pre('save', async function (next) {
     // Hash the password before saving the user model
     const user = this
-    //Create default category and card.
-    user.categories = categoryDefaultObject()
     
     if (user.isModified('password')) {
         user.password = await bcrypt.hash(user.password, 8)

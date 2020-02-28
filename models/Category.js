@@ -28,16 +28,19 @@ const categorySchema = mongoose.Schema({
         require: false,
     },
     isPublic: {
-        type: Boolean,
+        type: Number,
         require: true,
-        validate: value => {
-            if(!validate.isBoolean(value)){
-                throw new Error({error: "isPublic must be Boolean."})
-            }
-        }
+        min: [0, "Only 0 or 1"],
+        max: 1,
+        // validate: value => {
+        //     if(!validator.isNumeric(value)){
+        //         throw new Error({error: "isPublic must be Numeric [0-1]."})
+        //     }
+        // }
     },
     cards: [cardSchema],
 });
+
 
 
 categorySchema.statics.listCategory = async (token)=>{
@@ -45,6 +48,29 @@ categorySchema.statics.listCategory = async (token)=>{
     return user.categories;
 }
 
+categorySchema.statics.createCategory = async(token, body) => {
+    console.log("vo trong nay roi ne");
+    
+    // const user = await UserModel.findOne({'tokens.token':token})
+    // var category user.categories = body;
+    
+    console.log("body:"+JSON.stringify(body));
+    user.categories.push(body)
+    // var subdoc = user.categories[1]
+    // console.log(subdoc.isNew);
+    
+    Category.save(function (err) {
+        if (err) return console.log(err);
+        console.log('Success!');
+        return user.categories;
+      });
+    return user.categories
+}
+
+// categorySchema.statics.pre("save" ,async function(next){
+    
+//     next()
+// })
 
 const Category = mongoose.model("Category", categorySchema)
 

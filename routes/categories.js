@@ -13,8 +13,8 @@ var router = express.Router();
 */
 router.get("/", auth, async (req, res) => {
     try {
-        const category = await Category.listCategory(req.token);
-        res.status(200).send(category)
+        const categories = await User.findCategoriesById(req.user.id);
+        res.status(200).send(categories)
     } catch (error) {
         res.status(500).send(error);
     }
@@ -25,10 +25,11 @@ router.get("/", auth, async (req, res) => {
 */
 router.post("/",  auth, async(req ,res) => {
     try {
-        const category = await Category.createCategory(req.token, req.body)
-        res.status(200).send(category)
-    } catch (error) {
-        res.status(500).send(error)
+        const {name, isPublic, cards} = req.body
+        const category = await User.addCategory(req.user.id, req.body)
+        res.status(200).send({message : "Add category successfully!", category})
+    } catch (error) {        
+        res.status(500).send({error})
     }
     
 });

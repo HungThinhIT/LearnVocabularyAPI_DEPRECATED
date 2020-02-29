@@ -1,11 +1,5 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-var UserModel = require("./User");
-var user = new UserModel
-// var user = new UserModel();
-// var User = mongoose.model("User", UserModel);
 
 const cardSchema = mongoose.Schema({
     description: {
@@ -42,36 +36,6 @@ const categorySchema = mongoose.Schema({
 });
 
 
+// const Category = mongoose.model("Category", categorySchema)
 
-categorySchema.statics.listCategory = async (token)=>{
-    const user = await UserModel.findOne({'tokens.token': token});
-    return user.categories;
-}
-
-categorySchema.statics.createCategory = async(token, body) => {
-    console.log("vo trong nay roi ne");
-    
-    // const user = await UserModel.findOne({'tokens.token':token})
-    // var category user.categories = body;
-    
-    console.log("body:"+JSON.stringify(body));
-    user.categories.push(body)
-    // var subdoc = user.categories[1]
-    // console.log(subdoc.isNew);
-    
-    Category.save(function (err) {
-        if (err) return console.log(err);
-        console.log('Success!');
-        return user.categories;
-      });
-    return user.categories
-}
-
-// categorySchema.statics.pre("save" ,async function(next){
-    
-//     next()
-// })
-
-const Category = mongoose.model("Category", categorySchema)
-
-module.exports = Category
+module.exports = categorySchema

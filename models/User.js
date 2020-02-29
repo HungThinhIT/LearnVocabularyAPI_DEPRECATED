@@ -2,40 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
-const cardSchema = mongoose.Schema({
-    description: {
-        type: String,
-        require: false,
-    },
-    frontFace: {
-        type:String,
-        require: true,
-    },
-    backFace: {
-        type: String,
-        require: false,
-    }
-});
-
-const categorySchema = mongoose.Schema({
-    name: {
-        type: String,
-        require: false,
-    },
-    isPublic: {
-        type: Number,
-        require: true,
-        min: [0, "Only 0 or 1"],
-        max: 1,
-        // validate: value => {
-        //     if(!validator.isNumeric(value)){
-        //         throw new Error({error: "isPublic must be Numeric [0-1]."})
-        //     }
-        // }
-    },
-    cards: [cardSchema],
-});
+const categorySchema = require("./Category")
 
 const userSchema = mongoose.Schema({
     name: {
@@ -99,6 +66,21 @@ userSchema.statics.findByCredentials = async (email, password) => {
     }
     return user
 }
+
+userSchema.statics.findCategoriesById = async (id) => {
+    const categories = User.findById(id).select({categories: 1})
+    return categories
+} 
+
+userSchema.statics.addCategory = async (id, body) => {
+    const {name, isPublic, cards} = body
+    const userByID = await User.findById(id)
+    await userByID.categories.push({name, isPublic, cards})
+    await userByID.save();
+    return userByID.categories
+}
+
+
 
 const User = mongoose.model('User', userSchema)
 
